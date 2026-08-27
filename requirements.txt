@@ -1,0 +1,12 @@
+# CPU only. The simulator is written here rather than pulled from LIBERO or
+# ManiSkill, so there is no simulator dependency and the whole thing runs on a
+# laptop. See the Scope section of the README for what that costs.
+torch
+numpy
+matplotlib
+pandas
+pillow
+
+# dev
+pytest
+ruff
