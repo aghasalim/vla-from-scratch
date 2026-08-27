@@ -191,9 +191,9 @@ tests/           29 tests
 Related: [rectified-flow-from-scratch](https://github.com/aghasalim/rectified-flow-from-scratch)
 builds the flow matching machinery the pi-0 style head uses here.
 
-## Conventions
+## Methodology
 
-Shared rules in [`CONVENTIONS.md`](CONVENTIONS.md). Rule 15, say "not measured"
+The rules this follows are in [`METHODOLOGY.md`](METHODOLOGY.md). Rule 15, say "not measured"
 rather than extrapolating, is why the Scope section leads.
 
 ## Author
