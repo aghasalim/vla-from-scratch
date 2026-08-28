@@ -58,7 +58,27 @@ seeds.
 
 Full detail in [notes/METHODS.md](notes/METHODS.md#results).
 ## Latency is where flow earns its place
-| head | NFE | max Hz | vs regression | |---|---:|---:|---:| | regression | 1 | 1,891,644 | 1.0x | | discrete bins | 2 | 472,761 | 4.0x slower | | flow, 5 steps | 5 | 254,558 | 7.4x slower | | diffusion, 50 steps | 50 | 20,913 | **90x slower** | Sweeping the sampling budget is the useful part: | head | steps | success | max Hz | |---|---:|---:|---:| | diffusion | 50 | 0.238 | 20,985 | | diffusion | 10 | 0.223 | 105,379 | | diffusion | 4 | 0.250 | 258,237 | | flow | 5 | 0.266 | 251,679 | | flow | 2 | 0.273 | 616,867 | | **flow** | **1** | **0.309** | **1,167,180** | Flow at a single integration step is the best configuration measured here on both axes: 0.309 success at 1.17M Hz, which is within 1.6x of the regression head's rate while keeping the multimodality that regression lacks.
+| head | NFE | max Hz | vs regression |
+|---|---:|---:|---:|
+| regression | 1 | 1,891,644 | 1.0x |
+| discrete bins | 2 | 472,761 | 4.0x slower |
+| flow, 5 steps | 5 | 254,558 | 7.4x slower |
+| diffusion, 50 steps | 50 | 20,913 | **90x slower** |
+
+Sweeping the sampling budget is the useful part:
+
+| head | steps | success | max Hz |
+|---|---:|---:|---:|
+| diffusion | 50 | 0.238 | 20,985 |
+| diffusion | 10 | 0.223 | 105,379 |
+| diffusion | 4 | 0.250 | 258,237 |
+| flow | 5 | 0.266 | 251,679 |
+| flow | 2 | 0.273 | 616,867 |
+| **flow** | **1** | **0.309** | **1,167,180** |
+
+Flow at a single integration step is the best configuration measured here on both
+axes: 0.309 success at 1.17M Hz, which is within 1.6x of the regression head's rate
+while keeping the multimodality that regression lacks.
 
 ![control rate against success](results/latency.png)
 
