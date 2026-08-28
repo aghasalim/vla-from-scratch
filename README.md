@@ -56,6 +56,13 @@ seeds.
 ## Results
 3 seeds, 800 demonstrations each, 2000 gradient steps per head, 17 minutes on a CPU.
 
+The mode averaging prediction holds. Regression spends 8.44 steps of a 24 step
+episode pressed into the wall, every multimodal head spends between 2.05 and
+3.56, and the seed ranges do not overlap. On success only flow separates from
+regression, 0.273 against 0.219, with the other two heads in between and
+overlapping. All four sit far below the scripted demonstrator's 0.988, so the
+collision numbers show the mechanism rather than a solved task.
+
 Full detail in [notes/METHODS.md](notes/METHODS.md#results).
 ## Latency is where flow earns its place
 Each head at its default sampling budget, from `results/heads.csv`:
@@ -109,6 +116,11 @@ it needs the VLM.
 
 ## What I got wrong
 **I predicted action chunking would fix the dithering, and it made things worse.** The reasoning was sound: the demonstrator's choice of side is unobservable, so a head that samples independently every step can draw left then right and stall.
+At chunk 6, flow fell from 0.246 success to 0.047 and its collisions went from
+6.09 to 12.57. Open loop execution compounds prediction error faster than
+committing to a mode buys anything on a task this reactive. Two more mistakes
+are written up in the notes: a held out split that leaked until a test caught
+it, and an encoder I built with no proprioception.
 
 Full detail in [notes/METHODS.md](notes/METHODS.md#what-i-got-wrong).
 ## Running it
