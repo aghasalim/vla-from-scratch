@@ -191,3 +191,16 @@ def test_rollout_and_latency_report_sane_values():
     assert 0.0 <= r["success"] <= 1.0 and r["blocked_steps"] >= 0
     lat = latency(enc, head, n=8, repeats=3)
     assert lat["latency_s"] > 0 and lat["max_hz"] > 0 and lat["nfe"] == 1
+
+
+def test_trace_matches_the_rollout_it_came_from():
+    """The animation draws these arrays next to numbers from the same call, so a
+    trace that disagreed with its own blocked count would be a quiet lie."""
+    torch.manual_seed(0)
+    enc = VisionLanguageEncoder()
+    head = HEADS["regression"](enc.dim)
+    r = rollout(enc, head, n=16, horizon=6, seed=0, trace=True)
+    assert r["path"].shape == (7, 16, 2)
+    assert r["pressed"].shape == (6, 16)
+    assert r["pressed"].float().sum(0).mean().item() == pytest.approx(r["blocked_steps"])
+    assert r["path"].abs().max().item() <= 1.0

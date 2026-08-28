@@ -45,6 +45,14 @@ squared error converges to the conditional mean, so on this data it learns to
 drive into the obstacle. Without multimodality a regression head would win and
 the comparison would say nothing at all.
 
+![regression against flow, same scenes](results/rollout.gif)
+
+All 256 evaluation episodes at seed 0 playing at once, same scenes and same
+encoder for both, with only the action head changed. A dot turns black on a step
+where the wall refused the move it asked for. The counters end on 8.44
+collisions per episode against 3.56, which are also the medians across the three
+seeds.
+
 ## Results
 3 seeds, 800 demonstrations each, 2000 gradient steps per head, 17 minutes on a CPU.
 
@@ -89,8 +97,13 @@ python -m experiments.main --seeds 0 1 2 --demos 800 --steps 2000
 python -m bench.figures
 ```
 
-The sweep takes about 17 minutes on an M4 CPU. Figures read the committed CSVs
-and never re-run an experiment.
+The sweep takes about 17 minutes on an M4 CPU. Figures read the committed
+results and never re-run an experiment. The animation is the one thing that
+needs agent positions rather than summary numbers, so those are recorded in
+`results/rollout-traces.npz`. Delete that file and the next
+`python -m bench.figures` retrains two heads at seed 0 to rebuild it, which
+takes about three minutes and refuses to write anything unless it reproduces
+the committed `heads.csv` row exactly.
 
 ## Layout
 
@@ -101,7 +114,8 @@ vla/backbone.py  small vision language encoder, shared by every head
 vla/heads.py     the four action representations, all chunk aware
 vla/eval.py      closed loop rollouts and latency
 experiments/     the sweep
-tests/           29 tests
+bench/           the figures, and the plot style shared with my other repos
+tests/           30 tests
 ```
 
 ## Sources

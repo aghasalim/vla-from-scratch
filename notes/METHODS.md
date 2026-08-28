@@ -38,7 +38,7 @@ heads solves the task.
 ## Latency is where flow earns its place
 
 
-![control rate against success](results/latency.png)
+![control rate against success](../results/latency.png)
 
 | head | NFE | max Hz | vs regression |
 |---|---:|---:|---:|
