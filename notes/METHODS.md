@@ -40,6 +40,8 @@ heads solves the task.
 
 ![control rate against success](../results/latency.png)
 
+Each head at its default sampling budget, from `results/heads.csv`:
+
 | head | NFE | max Hz | vs regression |
 |---|---:|---:|---:|
 | regression | 1 | 1,891,644 | 1.0x |
@@ -47,7 +49,11 @@ heads solves the task.
 | flow, 5 steps | 5 | 254,558 | 7.4x slower |
 | diffusion, 50 steps | 50 | 20,913 | **90x slower** |
 
-Sweeping the sampling budget is the useful part:
+Sweeping the sampling budget is the useful part. The table below is a second
+harness, `results/step-sweep.csv`, so its flow 5 step row does not repeat the one
+above exactly: 0.266 success and 251,679 Hz here against 0.273 and 254,558 in the
+main run. Same head, two timing runs. Every cross-table comparison below names
+which run it took each side from.
 
 | head | steps | success | max Hz |
 |---|---:|---:|---:|
@@ -58,10 +64,21 @@ Sweeping the sampling budget is the useful part:
 | flow | 2 | 0.273 | 616,867 |
 | **flow** | **1** | **0.309** | **1,167,180** |
 
-Flow at a single integration step is the best configuration measured here on
-both axes: 0.309 success at 1.17M Hz, which is within 1.6x of the regression
-head's rate while keeping the multimodality that regression lacks. That is the
-pi-0 argument, and on this task it holds.
+Flow at one step is the fastest row here by a wide margin: 1.9x the next one,
+4.6x the flow 5 step row in the same table, and within 1.6x of regression's
+1,891,644 in the main run.
+
+It also has the highest median success, 0.309, and that half does not hold up.
+Its three seeds are 0.230, 0.309 and 0.316. The 0.230 is the worst any flow row
+records and sits below the medians of flow at 5 steps and flow at 2 steps, and
+the full span covers the median of every other row in the table except diffusion
+at 10 steps, which sits below it at 0.223. The bars in the plot above overlap
+almost completely. Three seeds do not separate these configurations on success,
+and I should not have written that they did.
+
+The pi-0 argument survives in its narrow form and only that form. Cutting flow
+from 5 steps to 1 costs no success I can measure and buys 4.6x the rate. Reading
+the 0.309 as one step beating five is reading noise.
 
 Diffusion at 4 steps is not worse than at 50, which says the 50 step default is
 simply overpaying on a 2D action. On a higher dimensional action it would not
