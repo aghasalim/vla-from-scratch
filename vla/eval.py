@@ -10,11 +10,17 @@ from .envs import ReachEnv
 
 @torch.no_grad()
 def rollout(encoder, head, n=256, horizon=24, seed=0, steps=None,
-            held_out=None, train=True):
+            held_out=None, train=True, trace=False):
+    """`trace` also returns the agent path, for drawing. It changes nothing else.
+
+    The recorded arrays are the same rollout that produced the numbers, so a
+    figure drawn from them cannot disagree with the table.
+    """
     env = ReachEnv(n, horizon=horizon, seed=seed, held_out_pairs=held_out, train=train)
     obs = env.observe()
     blocked_total = torch.zeros(n)
     chunk = getattr(head, "chunk", 1)
+    path, pressed = [env.agent.clone()], []
     t = 0
     while t < horizon:
         # Replan, then execute the whole chunk open loop. That commitment is
@@ -24,12 +30,18 @@ def rollout(encoder, head, n=256, horizon=24, seed=0, steps=None,
         for k in range(min(chunk, horizon - t)):
             obs, _, blocked = env.step(plan[:, k])
             blocked_total += blocked.float()
+            path.append(env.agent.clone())
+            pressed.append(blocked.clone())
             t += 1
-    return {
+    out = {
         "success": env.success().float().mean().item(),
         "blocked_steps": blocked_total.mean().item(),
         "final_dist": (env.agent - env.target_pos()).norm(dim=-1).mean().item(),
     }
+    if trace:
+        out["path"] = torch.stack(path)                     # (horizon + 1, n, 2)
+        out["pressed"] = torch.stack(pressed)               # (horizon, n) bool
+    return out
 
 
 @torch.no_grad()
