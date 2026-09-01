@@ -36,8 +36,9 @@ of them by colour and shape. A wall sits in the middle.
 
 The wall is the entire design. A demonstrator can route around it to the left or
 the right, and both are correct, so the demonstration distribution is
-**multimodal**. Measured on the demonstrations: the left mode's lateral action
-averages -0.42, the right mode's +0.42, and the two together average +0.02,
+**multimodal**. Measured on the demonstrations, over the steps where the
+demonstrator is still routing around the wall: the left mode's lateral action
+averages -0.44, the right mode's +0.44, and the two together average -0.004,
 which points straight at the wall.
 
 That last number is the whole experiment. A regression head trained with mean
@@ -123,6 +124,69 @@ are written up in the notes: a held out split that leaked until a test caught
 it, and an encoder I built with no proprioception.
 
 Full detail in [notes/METHODS.md](notes/METHODS.md#what-i-got-wrong).
+## Everything here is recomputed in seven other languages
+
+Every number in this README came out of one implementation. The medians and the
+seed ranges come from Python, and `scripts/check_numbers.py`, which is supposed
+to catch drift, recomputes them in Python too, from the same files, with the same
+`statistics.median`. The tests check that the code runs. Nothing checked that the
+aggregation was right, and nothing at all looked at the numbers written as words:
+the drift check says so itself, that it "does not check claims written in words".
+
+So the published figures are recomputed by seven independent implementations in
+seven languages, and CI fails if any two disagree. An arithmetic mistake would
+have to be made identically in all of them to survive.
+
+| implementation | what it recomputes | measured agreement |
+| --- | --- | --- |
+| [`verify/summaries.sql`](verify/summaries.sql) | the medians, minima and maxima of both results tables, in SQLite | 38 figures, 0 mismatches at published precision |
+| [`verify/route.c`](verify/route.c) | the demonstrator and environment kernel, columns resolved by name | 720 rows, worst 2.556e-06, float32 against double |
+| [`verify/gocheck`](verify/gocheck) | structural validation of all 5 results files, plus every quoted figure and the run arguments | 46 figures, exact |
+| [`verify/verify.R`](verify/verify.R) | the claims written as words: the range comparisons, plus the exact permutation test | 18 stated relations, all hold |
+| [`verify/demomc`](verify/demomc) | the demonstration statistic, resimulated from its own generator | 2000 replicates, worst published seed 1.68 sd out |
+| [`verify/derived.js`](verify/derived.js) | the figures that are ratios of other figures, and the demonstrator score | 9 figures, exact |
+| [`verify/tables.rb`](verify/tables.rb) | that the two copies of each table in the two documents still agree | 2 tables, 40 cells, identical |
+
+Run them all with [`./verify/verify.sh`](verify/verify.sh), which prints
+`8 passed, 0 failed, 0 skipped` on a machine with every toolchain and skips with
+a message on one without.
+
+**This found a wrong number, which is the point.** The multimodality paragraph
+used to say the two modes average -0.42 and +0.42 and together +0.02. Measured on
+the documented run they are -0.44 and +0.44 and together -0.004, and the Rust
+resimulation, 2000 replicates of the 800 demonstration protocol from its own
+generator, puts the population values at -0.43997 and +0.43981 with sd 0.005, and
+the pooled mean at -0.00035 with sd 0.017. The +0.02 was inside the noise, but
+the +-0.42 was not: the detour geometry moved at some point and the sentence did
+not. The README now states the measured values.
+
+**The Rust answers a question nothing had asked.** The two mode figures are
+single estimates from 800 demonstrations and carry their own sampling error,
+which was never measured. At 38,400,000 simulated steps the per mode sd is 0.005
+and the pooled sd is 0.017, so the pooled mean being near zero is a statement
+about the design and the exact digit is not. All three seeds land within 1.7 sd
+of the reference.
+
+**The R checks the sentences rather than the figures.** "The seed ranges do not
+overlap at all" is the result; the numbers either side of it are only how it is
+evidenced, and no check had ever evaluated the comparison. It also puts a p value
+on the separation for the first time: with 3 seeds against 3 there are 20 label
+assignments, so the smallest attainable two sided p is 0.10, and the collision
+separation scores exactly that against every multimodal head. Perfect separation
+on three seeds is worth 0.10 and no more.
+
+**The harness is itself checked.** CI corrupts `results/heads.csv`, requires the
+harness to reject it, restores it and requires a pass. Each implementation was
+also perturbed on its own input: nudging a seed success is caught by SQLite, Go
+and R, editing a Hz column by SQLite and Go, changing one demonstration statistic
+by Rust and Node, a ragged row or a NaN anywhere under `results/` by Go, running
+the sweep with the argparse defaults instead of the documented arguments by Go,
+and editing a table in one document but not the other by Ruby and Node.
+
+What this does not cover: the chunk 6 result and the proprioception result in
+"What I got wrong" were measured in runs whose outputs are not committed, so
+there is no file to recompute them from and nothing here checks them.
+
 ## Running it
 
 ```bash

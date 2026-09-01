@@ -18,8 +18,45 @@ jobs:
           pip install torch --index-url https://download.pytorch.org/whl/cpu
           pip install -r requirements.txt
       - name: Lint
-        run: ruff check vla/ bench/ tests/ experiments/ scripts/
+        run: ruff check vla/ bench/ tests/ experiments/ scripts/ verify/
       - name: Test
         run: python -m pytest tests/ -q
       - name: Check quoted numbers against results/
         run: python scripts/check_numbers.py
+      - name: Golden reference files still match the code that wrote them
+        env:
+          PYTHONPATH: .
+        run: |
+          python verify/export_golden.py "$RUNNER_TEMP/golden"
+          diff -u verify/golden_routes.csv "$RUNNER_TEMP/golden/golden_routes.csv"
+          diff -u verify/demo_stats.json "$RUNNER_TEMP/golden/demo_stats.json"
+
+  verify:
+    name: differential verification
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install R if the runner does not already have it
+        run: |
+          command -v Rscript || sudo apt-get update
+          command -v Rscript || sudo apt-get install -y --no-install-recommends r-base-core
+      - name: Toolchains present
+        run: |
+          for t in sqlite3 cc go Rscript cargo node ruby; do
+            printf '%-8s %s\n' "$t" "$(command -v $t || echo MISSING)"
+          done
+      - name: Recompute everything
+        run: ./verify/verify.sh
+      - name: The harness has to be able to fail
+        run: |
+          set -e
+          # A check that passes on corrupted input is checking nothing. Nudge a
+          # published collision number, require rejection, put it back, require
+          # a pass.
+          sed -i 's/^8.4375,1,/9.9999,1,/' results/heads.csv
+          if ./verify/verify.sh; then
+            echo "the harness accepted a corrupted results/heads.csv"
+            exit 1
+          fi
+          git checkout -- results/heads.csv
+          ./verify/verify.sh
