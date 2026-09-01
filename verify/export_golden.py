@@ -81,13 +81,17 @@ def demo_stats() -> dict:
         ax = d["action"][:, 0, 0]
         side = d["side"]
         below = d["state"][:, 1] < DETOUR_Y
+        # Rounded to six decimals. These are float32 reductions, so the last
+        # couple of digits depend on the summation order the platform picks,
+        # and a byte comparison of this file across machines would fail on
+        # noise a hundred times smaller than anything read off it.
         per_seed[str(seed)] = {
             "transitions": int(ax.shape[0]),
             "detour_transitions": int(below.sum()),
-            "left_mean": float(ax[below & (side < 0)].mean()),
-            "right_mean": float(ax[below & (side > 0)].mean()),
-            "pooled_mean": float(ax[below].mean()),
-            "scripted_success": float(d["success_rate"]),
+            "left_mean": round(float(ax[below & (side < 0)].mean()), 6),
+            "right_mean": round(float(ax[below & (side > 0)].mean()), 6),
+            "pooled_mean": round(float(ax[below].mean()), 6),
+            "scripted_success": round(float(d["success_rate"]), 6),
         }
     return {"demos": DEMOS, "horizon": HORIZON, "detour_y": DETOUR_Y,
             "seeds": list(SEEDS), "per_seed": per_seed}
