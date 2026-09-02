@@ -67,6 +67,16 @@ overlapping. All four sit far below the scripted demonstrator's 0.988, so the
 collision numbers show the mechanism rather than a solved task.
 
 Full detail in [notes/METHODS.md](notes/METHODS.md#results).
+
+## Sampling error
+
+The two mode figures are single estimates from 800 demonstrations and carry
+their own sampling error, which was never measured. Resimulating the 800
+demonstration protocol 2000 times from its own generator, 38,400,000 simulated
+steps, puts the population values at -0.43997 and +0.43981 with sd 0.005, and
+the pooled mean at -0.00035 with sd 0.017. So the pooled mean being near zero is
+a statement about the design, and the exact digit is not. All three seeds land
+within 1.7 sd of the reference.
 ## Latency is where flow earns its place
 Each head at its default sampling budget, from `results/heads.csv`:
 
