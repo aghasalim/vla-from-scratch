@@ -161,8 +161,9 @@ python -m experiments.main --seeds 0 1 2 --demos 800 --steps 2000
 python -m bench.figures
 ```
 
-The sweep takes about 17 minutes on an M4 CPU. Figures read the committed
-results and never re-run an experiment. The animation is the one thing that
+The sweep takes about 17 minutes on an M4 CPU. What that run was, setting by
+setting with the line each one comes from, is in [notes/WHAT-RAN.md](notes/WHAT-RAN.md).
+Figures read the committed results and never re-run an experiment. The animation is the one thing that
 needs agent positions rather than summary numbers, so those are recorded in
 `results/rollout-traces.npz`. Delete that file and the next
 `python -m bench.figures` retrains two heads at seed 0 to rebuild it, which
