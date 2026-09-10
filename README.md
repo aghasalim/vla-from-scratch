@@ -29,6 +29,10 @@ Every head below sits on the same features, trained with the same optimiser for
 the same number of steps, so differences between them are about the action
 representation and nothing else.
 
+This section leads because [`METHODOLOGY.md`](METHODOLOGY.md) asks me to write "not
+measured" instead of extrapolating, and generalisation is exactly the thing here
+that is not measured.
+
 ## The task, and why it has an obstacle
 
 An agent at the bottom, three objects at the top, and an instruction naming one
@@ -66,7 +70,7 @@ regression, 0.273 against 0.219, with the other two heads in between and
 overlapping. All four sit far below the scripted demonstrator's 0.988, so the
 collision numbers show the mechanism rather than a solved task.
 
-Full detail in [notes/METHODS.md](notes/METHODS.md#results).
+More in the [method notes](notes/METHODS.md#results).
 
 ## Sampling error
 
@@ -115,7 +119,8 @@ costs no success I can measure and buys 4.6x the rate. Not that one step is bett
 
 ![control rate against success](results/latency.png)
 
-Full detail in [notes/METHODS.md](notes/METHODS.md#latency-is-where-flow-earns-its-place).
+More in the [method notes](notes/METHODS.md#latency-is-where-flow-earns-its-place).
+
 ## Generalisation
 
 ![held out pairs](results/generalisation.png)
@@ -135,8 +140,9 @@ committing to a mode buys anything on a task this reactive. Two more mistakes
 are written up in the notes: a held out split that leaked until a test caught
 it, and an encoder I built with no proprioception.
 
-Full detail in [notes/METHODS.md](notes/METHODS.md#what-i-got-wrong).
-## Running it
+More in the [method notes](notes/METHODS.md#what-i-got-wrong).
+
+## How to run it
 
 ```bash
 python -m venv .venv && source .venv/bin/activate
@@ -163,7 +169,7 @@ needs agent positions rather than summary numbers, so those are recorded in
 takes about three minutes and refuses to write anything unless it reproduces
 the committed `heads.csv` row exactly.
 
-## Layout
+## Where things live
 
 ```
 vla/envs.py      the 2D task, written directly, no simulator dependency
@@ -176,7 +182,7 @@ bench/           the figures, and the plot style shared with my other repos
 tests/           30 tests
 ```
 
-## Sources
+## Papers
 
 - **Brohan, Brown, Carbajal et al. RT-2: Vision-Language-Action Models Transfer Web Knowledge to Robotic Control. CoRL 2023.** [arXiv:2307.15818](https://arxiv.org/abs/2307.15818) The discrete bins as text tokens head.
 - **Black, Brown, Darpinian et al. pi-0: A Vision-Language-Action Flow Model for General Robot Control. 2024.** [arXiv:2410.24164](https://arxiv.org/abs/2410.24164) The flow matching action expert, and the latency argument this repo measures.
@@ -187,26 +193,6 @@ tests/           30 tests
 
 Related: [rectified-flow-from-scratch](https://github.com/aghasalim/rectified-flow-from-scratch)
 builds the flow matching machinery the pi-0 style head uses here.
-
-## Methodology
-
-The rules this follows are in [`METHODOLOGY.md`](METHODOLOGY.md). Rule 15, say "not measured"
-rather than extrapolating, is why the Scope section leads.
-
-## Author
-
-Aghasalim Mustafazada, third year AI student at Howest, Belgium.
-
-<p align="center">
-  <a href="https://github.com/aghasalim">
-    <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="github"></a>
-  <a href="https://www.kaggle.com/aghasalimmustafazada">
-    <img src="https://img.shields.io/badge/Kaggle-20BEFF?style=for-the-badge&logo=kaggle&logoColor=white" alt="kaggle"></a>
-  <a href="https://linkedin.com/in/mustafazada">
-    <img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="linkedin"></a>
-  <a href="https://orcid.org/0009-0001-8746-4582">
-    <img src="https://img.shields.io/badge/ORCID-A6CE39?style=for-the-badge&logo=orcid&logoColor=white" alt="orcid"></a>
-</p>
 
 ## License
 
