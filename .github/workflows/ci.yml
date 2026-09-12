@@ -50,7 +50,7 @@ jobs:
       - name: The harness has to be able to fail
         run: |
           set -e
-          # A check that passes on corrupted input is checking nothing. Nudge a
+          # A check that cannot fail is not a check. Nudge a
           # published collision number, require rejection, put it back, require
           # a pass.
           sed -i 's/^8.4375,1,/9.9999,1,/' results/heads.csv
