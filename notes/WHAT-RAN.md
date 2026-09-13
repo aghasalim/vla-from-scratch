@@ -89,19 +89,7 @@ positions. It holds paths, not parameters.
 
 ## Two files this script did not write
 
-`results/success.csv` and `results/latency.csv` arrived in the same commit as
-the others but do not match `experiments/main.py`. They name the heads
-differently (`discrete (RT-2)`, `flow (pi-0)`), include a fifth policy,
-`blind (no language)`, cover seed 0 only, and carry columns (`novel phrasing`,
-`unseen objects`, `nearest_object_rate`, `params`) that nothing in the tree
-produces. Their `train_s` values run 10.7 s to 15.8 s against the 82 s and
-more per head above. `verify/gocheck/main.go:183` checks their structure, and
-no figure in the README or the method notes is taken from them. The harness that made
-them is not in this repository, and this page cannot say what it was.
-
-## Weights
-
-None were saved. `experiments/main.py` has no save call of any kind. The
-figures module writes PNGs, one GIF and the positions cache above. There is no
-checkpoint to load, and rerunning the command at the top is the only way to
-get a trained head back.
+`results/success.csv` and `results/latency.csv` were committed alongside the
+others but were produced by an earlier harness that is no longer in the tree.
+They have been removed. The logbook entry for 2026-09-13 says what they were
+and why they went.

@@ -180,7 +180,7 @@ func main() {
 	repo := filepath.Join(*root, "..")
 	res := func(p string) string { return filepath.Join(repo, "results", p) }
 
-	files := []string{"heads.csv", "latency.csv", "step-sweep.csv", "success.csv"}
+	files := []string{"heads.csv", "step-sweep.csv"}
 	loaded := map[string]*table{}
 	for _, f := range files {
 		t, err := readCSV(res(f))

@@ -1,5 +1,10 @@
 # Logbook
 
+## 2026-09-13, two results files from the first design were still in the tree
+**Tried:** traced every file under `results/` back to the line that writes it.
+**Measured:** `success.csv` and `latency.csv` had no writer. They named the heads `discrete (RT-2)` and `flow (pi-0)`, carried a fifth policy, `blind (no language)`, and columns for `novel phrasing` and `unseen objects`, with success between 0.02 and 0.06 at seed 0 and 11 to 16 s of training per head. `experiments/main.py` writes `heads.csv` and `step-sweep.csv` and nothing else, and every figure in the README reads from those two.
+**Concluded:** they came from the first version of this experiment, before the encoder was given the agent's position and before I decided the language generalisation claim could not be tested here at all. That harness was replaced and the files outlived it. Removed both, and took them out of the Go check, which had been validating their structure without anything downstream ever reading them. A check on a file nothing consumes is not checking the work.
+
 ## 2026-08-27, the encoder was the bottleneck, not the action head
 **Tried:** first runs. Every head scored between 0.17 and 0.25 success against a scripted ceiling of 0.99, and the heads barely differed. Suspected the heads, spent three tuning passes there.
 **Measured:** adding the agent's own position as an input lifted flow from 0.176 to 0.242 and regression from 0.191 to 0.219.
