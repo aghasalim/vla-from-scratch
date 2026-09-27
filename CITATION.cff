@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: If you use this work, please cite it as below.
+title: "vla-from-scratch"
+abstract: "Four VLA action representations compared on multimodal demonstrations: bins, regression, diffusion, flow. Regression drives into the obstacle it should route around; flow keeps multimodality at 90x diffusion's control rate."
+type: software
+authors:
+  - family-names: Mustafazada
+    given-names: Aghasalim
+    orcid: "https://orcid.org/0009-0001-8746-4582"
+    affiliation: "Howest University of Applied Sciences"
+repository-code: "https://github.com/aghasalim/vla-from-scratch"
+url: "https://aghasalim.github.io/"
+license: MIT
+keywords:
+  - action chunking
+  - diffusion policy
+  - flow matching
+  - from scratch
+  - imitation learning
+  - machine learning
+  - pytorch
+  - robot learning
