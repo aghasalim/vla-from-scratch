@@ -68,7 +68,7 @@ episode pressed into the wall, every multimodal head spends between 2.05 and
 3.56, and the seed ranges do not overlap. On success only flow separates from
 regression, 0.273 against 0.219, with the other two heads in between and
 overlapping. All four sit far below the scripted demonstrator's 0.988, so the
-collision numbers show the mechanism instead of a solved task.
+collision numbers show the mechanism; none of them solves the task.
 
 More in the [method notes](notes/METHODS.md#results).
 
@@ -164,7 +164,7 @@ python -m bench.figures
 The sweep takes about 17 minutes on an M4 CPU. What that run was, setting by
 setting with the line each one comes from, is in [notes/WHAT-RAN.md](notes/WHAT-RAN.md).
 Figures read the committed results and never re-run an experiment. The animation is the one thing that
-needs agent positions instead of summary numbers, so those are recorded in
+needs agent positions, so those are recorded in
 `results/rollout-traces.npz`. Delete that file and the next
 `python -m bench.figures` retrains two heads at seed 0 to rebuild it, which
 takes about three minutes and refuses to write anything unless it reproduces
