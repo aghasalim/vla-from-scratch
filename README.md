@@ -1,5 +1,7 @@
 # vla-from-scratch
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23003685.svg)](https://doi.org/10.5281/zenodo.23003685)
+
 Four ways for a policy to emit continuous actions, compared under identical
 conditions: discrete bins as tokens (RT-2), a regression head, a diffusion
 policy head, and a flow matching action expert (pi-0).
