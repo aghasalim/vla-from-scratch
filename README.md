@@ -68,7 +68,7 @@ episode pressed into the wall, every multimodal head spends between 2.05 and
 3.56, and the seed ranges do not overlap. On success only flow separates from
 regression, 0.273 against 0.219, with the other two heads in between and
 overlapping. All four sit far below the scripted demonstrator's 0.988, so the
-collision numbers show the mechanism rather than a solved task.
+collision numbers show the mechanism instead of a solved task.
 
 More in the [method notes](notes/METHODS.md#results).
 
@@ -133,7 +133,7 @@ version of this column is the one that justifies putting a VLM in the loop, and
 it needs the VLM.
 
 ## What I got wrong
-**I predicted action chunking would fix the dithering, and it made things worse.** The reasoning was sound: the demonstrator's choice of side is unobservable, so a head that samples independently every step can draw left then right and stall.
+I predicted action chunking would fix the dithering, and it made things worse. The reasoning was sound: the demonstrator's choice of side is unobservable, so a head that samples independently every step can draw left then right and stall.
 At chunk 6, flow fell from 0.246 success to 0.047 and its collisions went from
 6.09 to 12.57. Open loop execution compounds prediction error faster than
 committing to a mode buys anything on a task this reactive. Two more mistakes
@@ -164,7 +164,7 @@ python -m bench.figures
 The sweep takes about 17 minutes on an M4 CPU. What that run was, setting by
 setting with the line each one comes from, is in [notes/WHAT-RAN.md](notes/WHAT-RAN.md).
 Figures read the committed results and never re-run an experiment. The animation is the one thing that
-needs agent positions rather than summary numbers, so those are recorded in
+needs agent positions instead of summary numbers, so those are recorded in
 `results/rollout-traces.npz`. Delete that file and the next
 `python -m bench.figures` retrains two heads at seed 0 to rebuild it, which
 takes about three minutes and refuses to write anything unless it reproduces
