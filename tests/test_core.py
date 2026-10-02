@@ -111,7 +111,7 @@ def test_head_shapes_and_finite_loss(name, chunk):
 @pytest.mark.parametrize("name", sorted(HEADS))
 def test_sampled_actions_are_in_range(name):
     torch.manual_seed(0)
-    s = HEADS[name](128)(torch.randn(16, 128)) if False else HEADS[name](128).sample(torch.randn(16, 128))
+    s = HEADS[name](128).sample(torch.randn(16, 128))
     assert s.abs().max() <= 1.0 + 1e-5
 
 
