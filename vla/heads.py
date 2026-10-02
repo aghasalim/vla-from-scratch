@@ -53,7 +53,7 @@ class Head(nn.Module):
     name = "base"
     multimodal = False
 
-    def nfe(self, steps: int) -> int:
+    def nfe(self, steps: int | None = None) -> int:
         raise NotImplementedError
 
 
