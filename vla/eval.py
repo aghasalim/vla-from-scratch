@@ -1,4 +1,4 @@
-"""Closed loop rollouts, and the latency that decides control rate."""
+"""Closed loop rollouts, and action head throughput."""
 from __future__ import annotations
 
 import time
@@ -46,7 +46,7 @@ def rollout(encoder, head, n=256, horizon=24, seed=0, steps=None,
 
 @torch.no_grad()
 def latency(encoder, head, n=64, steps=None, repeats=12):
-    """Seconds per action, and the control frequency that implies."""
+    """Seconds per action over a batch of n, so max_hz is throughput, not control rate."""
     env = ReachEnv(n, seed=0)
     obs = env.observe()
     feat = encoder(obs["image"], obs["color"], obs["shape"], obs["state"])

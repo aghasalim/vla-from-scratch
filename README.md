@@ -86,19 +86,25 @@ within 1.7 sd of the reference.
 ## Latency is where flow earns its place
 Each head at its default sampling budget, from `results/heads.csv`:
 
-| head | NFE | max Hz | vs regression |
+| head | NFE | actions/s, batch 64 | vs regression |
 |---|---:|---:|---:|
 | regression | 1 | 1,891,644 | 1.0x |
 | discrete bins | 2 | 472,761 | 4.0x slower |
 | flow, 5 steps | 5 | 254,558 | 7.4x slower |
 | diffusion, 50 steps | 50 | 20,913 | **90x slower** |
 
+These are throughput, not a robot's control rate. `latency()` in `vla/eval.py`
+samples 64 scenes in one call and divides the time by 64, so each figure is
+actions per second at batch 64. A single robot runs at batch 1, which costs more
+per action, and I have not measured that. The ratios between heads are what the
+tables are for.
+
 Sweeping the sampling budget is the useful part. The table below is a second
 harness, `results/step-sweep.csv`, so its flow 5 step row does not repeat the one
-above exactly: 0.266 success and 251,679 Hz here against 0.273 and 254,558 in the
+above exactly: 0.266 success and 251,679 actions/s here against 0.273 and 254,558 in the
 main run. Same head, two timing runs.
 
-| head | steps | success | max Hz |
+| head | steps | success | actions/s, batch 64 |
 |---|---:|---:|---:|
 | diffusion | 50 | 0.238 | 20,985 |
 | diffusion | 10 | 0.223 | 105,379 |
@@ -117,9 +123,9 @@ the full span covers the median of every other row in the table except diffusion
 seeds do not separate these configurations on success.
 
 So the claim the data supports is the narrow one. Cutting flow from 5 steps to 1
-costs no success I can measure and buys 4.6x the rate. Not that one step is better.
+costs no success I can measure and buys 4.6x the throughput. Not that one step is better.
 
-![control rate against success](results/latency.png)
+![throughput against success](results/latency.png)
 
 More in the [method notes](notes/METHODS.md#latency-is-where-flow-earns-its-place).
 

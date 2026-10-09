@@ -9,7 +9,7 @@ Long form detail moved out of the README.
 3 seeds, 800 demonstrations each, 2000 gradient steps per head, 17 minutes on a
 CPU. The scripted demonstrator scores 0.988, which is the ceiling.
 
-| head | success | range | held out pairs | obstacle collisions | NFE | max Hz |
+| head | success | range | held out pairs | obstacle collisions | NFE | actions/s, batch 64 |
 |---|---:|---|---:|---:|---:|---:|
 | regression | 0.219 | 0.211 to 0.223 | 0.172 | **8.44** | 1 | 1,891,644 |
 | discrete bins | 0.234 | 0.211 to 0.289 | 0.195 | 2.05 | 2 | 472,761 |
@@ -38,11 +38,11 @@ heads solves the task.
 ## Latency is where flow earns its place
 
 
-![control rate against success](../results/latency.png)
+![throughput against success](../results/latency.png)
 
 Each head at its default sampling budget, from `results/heads.csv`:
 
-| head | NFE | max Hz | vs regression |
+| head | NFE | actions/s, batch 64 | vs regression |
 |---|---:|---:|---:|
 | regression | 1 | 1,891,644 | 1.0x |
 | discrete bins | 2 | 472,761 | 4.0x slower |
@@ -51,11 +51,11 @@ Each head at its default sampling budget, from `results/heads.csv`:
 
 Sweeping the sampling budget is the useful part. The table below is a second
 harness, `results/step-sweep.csv`, so its flow 5 step row does not repeat the one
-above exactly: 0.266 success and 251,679 Hz here against 0.273 and 254,558 in the
+above exactly: 0.266 success and 251,679 actions/s here against 0.273 and 254,558 in the
 main run. Same head, two timing runs. Every cross-table comparison below names
 which run it took each side from.
 
-| head | steps | success | max Hz |
+| head | steps | success | actions/s, batch 64 |
 |---|---:|---:|---:|
 | diffusion | 50 | 0.238 | 20,985 |
 | diffusion | 10 | 0.223 | 105,379 |
@@ -77,15 +77,17 @@ almost completely. Three seeds do not separate these configurations on success,
 and I should not have written that they did.
 
 The pi-0 argument survives in its narrow form and only that form. Cutting flow
-from 5 steps to 1 costs no success I can measure and buys 4.6x the rate. Reading
+from 5 steps to 1 costs no success I can measure and buys 4.6x the throughput. Reading
 the 0.309 as one step beating five is reading noise.
 
 Diffusion at 4 steps is not worse than at 50, which says the 50 step default is
 simply overpaying on a 2D action. On a higher dimensional action it would not
 be, and I would not generalise this to a real robot.
 
-Note these Hz numbers are the action head only, on 2D actions, and they exclude
-the encoder forward pass. They compare heads against each other and are not a
+Note these numbers are the action head only, on 2D actions, and they exclude
+the encoder forward pass. They are also throughput at batch 64: one call samples
+64 scenes and the time is divided by 64, so they are not the rate a single robot
+could run at, and batch 1 latency was not measured. They compare heads against each other and are not a
 claim about any real control loop.
 
 

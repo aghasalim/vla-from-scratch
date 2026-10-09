@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: If you use this work, please cite it as below.
 title: "vla-from-scratch"
-abstract: "Four VLA action representations compared on multimodal demonstrations: bins, regression, diffusion, flow. Regression drives into the obstacle it should route around; flow keeps multimodality at 90x diffusion's control rate."
+abstract: "Four VLA action representations compared on multimodal demonstrations: bins, regression, diffusion, flow. Regression drives into the obstacle it should route around; flow keeps multimodality at 90x diffusion's throughput."
 type: software
 authors:
   - family-names: Mustafazada

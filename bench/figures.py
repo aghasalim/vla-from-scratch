@@ -121,7 +121,7 @@ def fig_latency(out: Path) -> Path:
                         path_effects=[withStroke(linewidth=3, foreground="white")])
     ax.set_xscale("log")
     ax.set_xlim(1.4e4, 3.6e6)
-    ax.set_xlabel("max control rate (Hz, action head only, one CPU core, log scale)")
+    ax.set_xlabel("throughput (actions/s at batch 64, action head only, one CPU core, log scale)")
     ax.set_ylabel("success rate")
     ax.set_ylim(0.175, 0.35)
     titled(ax, "Flow keeps the multimodality at close to regression speed",
