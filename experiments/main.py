@@ -6,7 +6,7 @@ gradient steps. The only thing that varies is how the action is represented.
 Three measurements:
   success        closed loop rollout success rate on held-in scenes
   generalisation the same on (colour, shape) pairs never seen in training
-  latency        seconds per action and the control rate it implies
+  latency        seconds per action at batch 64, and the throughput that gives
 
     .venv/bin/python -m experiments.main
 """

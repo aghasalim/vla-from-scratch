@@ -24,3 +24,8 @@
 **Tried:** all four heads, 3 seeds, 800 demonstrations, 2000 steps each. 1042 s.
 **Measured:** regression spends 8.44 of 24 steps pressed into the obstacle; discrete bins 2.05, diffusion 2.39, flow 3.56. The seed ranges do not overlap: regression 8.20 to 9.45 against a multimodal envelope of 1.43 to 4.37. Success also separates for flow alone, 0.270 to 0.297 against regression's 0.211 to 0.223. On latency, regression runs at 1.89M Hz and diffusion at 50 steps at 20.9k, a factor of 90. Flow at a single step reaches 0.309 success at 1.17M Hz.
 **Concluded:** the theory predicted this exactly and it reproduced. The demonstrations average to -0.004 lateral action, which points at the wall, and the head that minimises squared error drives there. The pi-0 claim also holds on this task: flow keeps multimodality at within 1.6x of regression's control rate while diffusion pays 90x. Worth being careful about what this does not show: every head is far below the 0.988 demonstrator, so avoiding the obstacle is necessary and not sufficient, and none of this tests the pretraining claim that actually motivates VLAs.
+
+## 2026-10-10, the Hz column was throughput at batch 64
+**Tried:** reread `latency()` in `vla/eval.py` against the README's "max Hz" column.
+**Measured:** it times one call over 64 scenes and divides by 64, so regression's 1,891,644 is actions per second at batch 64, not a rate one robot could run at.
+**Concluded:** relabelled the columns and the latency plot as throughput at batch 64. The numbers and the ratios between heads are unchanged. Batch 1 latency still needs measuring on an idle machine; this one was too loaded for timings I would publish.
