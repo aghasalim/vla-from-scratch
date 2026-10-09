@@ -163,6 +163,19 @@ def test_discrete_bins_quantisation_floor():
     assert h.quantise(torch.tensor([[0.0, 1.0]])).tolist() == [[10, 20]]
 
 
+def test_discrete_bins_trains_on_what_it_samples():
+    """sample() feeds bin centres back into the next token, so the loss has to
+    condition on bin centres too. Two actions in the same bins must then give
+    the same loss; conditioning on the raw action made them differ."""
+    torch.manual_seed(0)
+    h = DiscreteBins(16, bins=21)
+    feat = torch.randn(8, 16)
+    centres = h.centers[torch.randint(1, 20, (8, 1, 2))]
+    a, nudged = centres - 0.03, centres + 0.03   # bins are 0.1 wide
+    assert torch.equal(h.quantise(a.flatten(1)), h.quantise(nudged.flatten(1)))
+    assert torch.allclose(h.loss(feat, a), h.loss(feat, nudged))
+
+
 def test_nfe_reflects_sampling_cost():
     assert HEADS["regression"](128).nfe() == 1
     assert HEADS["flow (pi-0 style)"](128).nfe(5) == 5

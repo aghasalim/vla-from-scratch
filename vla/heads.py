@@ -105,7 +105,8 @@ class DiscreteBins(Head):
         total, prefix = 0.0, feat
         for i, net in enumerate(self.nets):
             total = total + nn.functional.cross_entropy(net(prefix), idx[:, i])
-            prefix = torch.cat([prefix, flat[:, i:i + 1]], -1)
+            # condition on the bin centre, which is what sample() feeds back
+            prefix = torch.cat([prefix, self.centers[idx[:, i]].unsqueeze(-1)], -1)
         return total / self.n_out
 
     @torch.no_grad()
