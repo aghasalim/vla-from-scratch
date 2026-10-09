@@ -16,6 +16,13 @@ CPU. The scripted demonstrator scores 0.988, which is the ceiling.
 | diffusion | 0.238 | 0.184 to 0.254 | 0.188 | 2.39 | 50 | 20,913 |
 | **flow (pi-0)** | **0.273** | 0.270 to 0.297 | **0.238** | 3.56 | 5 | 254,558 |
 
+The discrete bins row is from an older version of that head. Its loss fed each
+token the raw continuous action of the token before, while sampling feeds it the
+bin centre it drew, so it trained on inputs it never sees at run time. Fixed in
+`vla/heads.py` on 2026-10-10. The success, held out and collision figures in
+that row have not been rerun since. Its throughput is unaffected, because
+sampling did not change.
+
 **The mode averaging prediction holds, and cleanly.** Regression spends 8.44
 steps of a 24 step episode pressed into the wall. Every multimodal head spends
 between 2.05 and 3.56. The seed ranges do not overlap at all: regression spans

@@ -72,6 +72,10 @@ regression, 0.273 against 0.219, with the other two heads in between and
 overlapping. All four sit far below the scripted demonstrator's 0.988, so the
 collision numbers show the mechanism; none of them solves the task.
 
+The discrete bins figures come from a version of that head that conditioned on
+the raw action in training and on bin centres when sampling. That is fixed, and
+those figures have not been rerun yet.
+
 More in the [method notes](notes/METHODS.md#results).
 
 ## Sampling error

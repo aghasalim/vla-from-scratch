@@ -29,3 +29,8 @@
 **Tried:** reread `latency()` in `vla/eval.py` against the README's "max Hz" column.
 **Measured:** it times one call over 64 scenes and divides by 64, so regression's 1,891,644 is actions per second at batch 64, not a rate one robot could run at.
 **Concluded:** relabelled the columns and the latency plot as throughput at batch 64. The numbers and the ratios between heads are unchanged. Batch 1 latency still needs measuring on an idle machine; this one was too loaded for timings I would publish.
+
+## 2026-10-10, discrete bins trained on inputs it never sees
+**Tried:** reread `DiscreteBins.loss` against `DiscreteBins.sample`.
+**Measured:** the loss conditioned each token on the raw continuous action before it, while sampling conditions on the bin centre it drew. With 21 bins those differ by up to 0.05.
+**Concluded:** the loss now conditions on bin centres, and a test checks that two actions in the same bins give the same loss. The published discrete bins success, held out and collision figures are from the old head and are marked that way until the main run is redone.
