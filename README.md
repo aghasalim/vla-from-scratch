@@ -2,93 +2,89 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23003685.svg)](https://doi.org/10.5281/zenodo.23003685)
 
-Four ways for a policy to emit continuous actions, compared under identical
-conditions: discrete bins as tokens (RT-2), a regression head, a diffusion
-policy head, and a flow matching action expert (pi-0).
+I compared four ways for a policy to output continuous actions, all under the
+same conditions. They are discrete bins as tokens (RT-2), a regression head, a
+diffusion policy head, and a flow matching action expert (pi-0).
 
-That comparison is the part of this project that is not a reimplementation of
-anything, and it is the part that runs on a laptop CPU. What does not run here
-is the thing that makes a VLA a VLA, and section two says so before showing any
-numbers.
+That comparison is my own work rather than a reimplementation, and it runs on a
+laptop CPU. The part that makes a VLA a VLA doesn't run here, and I say so in the
+next section before showing any numbers.
 
 ![mode averaging](results/multimodality.png)
 
 ## Scope, stated first
 
 A real VLA puts a pretrained 1B to 3B vision language model in front of the
-action head, and the claim being tested is that web scale pretraining brings
-*semantic* generalisation to robotics. **This repo does not test that claim and
-cannot.** The encoder here is a small CNN plus token embeddings, trained from
-scratch on 19,200 transitions of a 2D task. Nothing is pretrained, so there is
-no transfer to measure.
+action head. The idea is that web scale pretraining gives robots *semantic*
+generalisation. This repo doesn't test that, and it can't. My encoder is a small
+CNN plus token embeddings, trained from scratch on 19,200 transitions of a 2D
+task. Nothing is pretrained, so there's no transfer to measure.
 
-There is also no LIBERO and no ManiSkill. The simulator is 24x24 pixels of a 2D
-reaching task, written directly so the repo has no simulator dependency.
+I also don't use LIBERO or ManiSkill. The simulator is a 24x24 pixel 2D reaching
+task that I wrote myself so the repo doesn't depend on a simulator.
 
-What survives that reduction is the engineering question the four heads answer:
-given identical perception, how should a policy represent a continuous action?
-Every head below sits on the same features, trained with the same optimiser for
-the same number of steps, so differences between them are about the action
-representation and nothing else.
+What's left after cutting all that is a practical question. If perception is the
+same, how should a policy represent a continuous action? Every head below uses
+the same features and is trained with the same optimiser for the same number of
+steps. So any difference between them comes from the action representation.
 
-This section leads because [`METHODOLOGY.md`](METHODOLOGY.md) asks me to write "not
-measured" instead of extrapolating, and generalisation is exactly the thing here
-that is not measured.
+I put this section first because [`METHODOLOGY.md`](METHODOLOGY.md) asks me to write "not
+measured" instead of extrapolating, and generalisation is the thing I didn't
+measure here.
 
 ## The task, and why it has an obstacle
 
-An agent at the bottom, three objects at the top, and an instruction naming one
-of them by colour and shape. A wall sits in the middle.
+The agent starts at the bottom, there are three objects at the top, and the
+instruction names one of them by colour and shape. There's a wall in the middle.
 
-The wall is the entire design. A demonstrator can route around it to the left or
-the right, and both are correct, so the demonstration distribution is
-**multimodal**. Measured on the demonstrations, over the steps where the
-demonstrator is still routing around the wall: the left mode's lateral action
-averages -0.44, the right mode's +0.44, and the two together average -0.004,
-which points straight at the wall.
+I added the wall on purpose. A demonstrator can go around it on the left or the
+right, and both are correct, so the demonstrations are multimodal. I measured it
+on the demonstrations, over the steps where the demonstrator is still going
+around the wall. The left mode's lateral action averages -0.44, the right mode's +0.44, and the two
+together average -0.004, which points straight at the wall.
 
-That last number is the whole experiment. A regression head trained with mean
-squared error converges to the conditional mean, so on this data it learns to
-drive into the obstacle. Without multimodality a regression head would win and
-the comparison would say nothing at all.
+That last number is what the experiment hinges on. A regression head trained with
+mean squared error converges to the conditional mean, so on this data it learns
+to drive into the obstacle. If the data weren't multimodal, regression would win
+and the comparison wouldn't tell me anything.
 
 ![regression against flow, same scenes](results/rollout.gif)
 
-All 256 evaluation episodes at seed 0 playing at once, same scenes and same
-encoder for both, with only the action head changed. A dot turns black on a step
-where the wall refused the move it asked for. The counters end on 8.44
+This shows all 256 evaluation episodes at seed 0 playing at once. Both sides use
+the same scenes and encoder, and only the action head differs. A dot turns black
+on a step where the wall blocked the move it asked for. The counters end on 8.44
 collisions per episode against 3.56, which are also the medians across the three
 seeds.
 
 ## Results
 3 seeds, 800 demonstrations each, 2000 gradient steps per head, 17 minutes on a CPU.
-Every figure below is recomputed from the committed results by independent
+Every figure below is recomputed from the committed results by separate
 implementations in `verify/`, and CI fails if any of them disagree.
 
-The mode averaging prediction holds. Regression spends 8.44 steps of a 24 step
-episode pressed into the wall, every multimodal head spends between 2.05 and
-3.56, and the seed ranges do not overlap. On success only flow separates from
-regression, 0.273 against 0.219, with the other two heads in between and
-overlapping. All four sit far below the scripted demonstrator's 0.988, so the
-collision numbers show the mechanism; none of them solves the task.
+The mode averaging prediction held up. Regression spends 8.44 steps of a 24 step
+episode pushed into the wall. Every multimodal head spends between 2.05 and 3.56,
+and the seed ranges don't overlap. On success, only flow separates from
+regression, 0.273 against 0.219. The other two heads land in between and overlap.
+All four are far below the scripted demonstrator's 0.988, so the collision
+numbers show the mechanism, but none of the heads solves the task.
 
-The discrete bins figures come from a version of that head that conditioned on
-the raw action in training and on bin centres when sampling. That is fixed, and
-those figures have not been rerun yet.
+The discrete bins figures come from an older version of that head. It conditioned
+on the raw action in training and on bin centres when sampling. I've fixed that,
+but I haven't rerun those figures yet.
 
 More in the [method notes](notes/METHODS.md#results).
 
 ## Sampling error
 
-The two mode figures are single estimates from 800 demonstrations and carry
-their own sampling error, which was never measured. Resimulating the 800
+The two mode figures are single estimates from 800 demonstrations, so they have
+their own sampling error, which I hadn't measured at first. I resimulated the 800
 demonstration protocol 2000 times from its own generator, 38,400,000 simulated
-steps, puts the population values at -0.43997 and +0.43981 with sd 0.005, and
-the pooled mean at -0.00035 with sd 0.017. So the pooled mean being near zero is
-a statement about the design, and the exact digit is not. All three seeds land
-within 1.7 sd of the reference.
+steps in total. That puts the population values at -0.43997 and +0.43981 with sd
+0.005, and the pooled mean at -0.00035 with sd 0.017. So the pooled mean being near
+zero comes from the design, but the exact digit doesn't mean much. All three
+seeds land within 1.7 sd of the reference.
 ## Latency is where flow earns its place
-Each head at its default sampling budget, from `results/heads.csv`:
+Here is each head at its default sampling budget, from `results/heads.csv`.
 
 | head | NFE | actions/s, batch 64 | vs regression |
 |---|---:|---:|---:|
@@ -97,16 +93,16 @@ Each head at its default sampling budget, from `results/heads.csv`:
 | flow, 5 steps | 5 | 254,558 | 7.4x slower |
 | diffusion, 50 steps | 50 | 20,913 | **90x slower** |
 
-These are throughput, not a robot's control rate. `latency()` in `vla/eval.py`
-samples 64 scenes in one call and divides the time by 64, so each figure is
-actions per second at batch 64. A single robot runs at batch 1, which costs more
-per action, and I have not measured that. The ratios between heads are what the
-tables are for.
+These numbers are throughput, which isn't the same as a robot's control rate.
+`latency()` in `vla/eval.py` samples 64 scenes in one call and divides the time by
+64, so each figure is actions per second at batch 64. A single robot runs at
+batch 1, which costs more per action, and I haven't measured that. I mainly use
+these tables to compare heads with each other.
 
-Sweeping the sampling budget is the useful part. The table below is a second
-harness, `results/step-sweep.csv`, so its flow 5 step row does not repeat the one
-above exactly: 0.266 success and 251,679 actions/s here against 0.273 and 254,558 in the
-main run. Same head, two timing runs.
+Sweeping the sampling budget is where it gets interesting. The table below comes
+from a second harness, `results/step-sweep.csv`, so its flow 5 step row doesn't
+match the one above exactly. It gives 0.266 success and 251,679 actions/s, against 0.273 and 254,558 in the
+main run. It's the same head, timed in two separate runs.
 
 | head | steps | success | actions/s, batch 64 |
 |---|---:|---:|---:|
@@ -117,17 +113,17 @@ main run. Same head, two timing runs.
 | flow | 2 | 0.273 | 616,867 |
 | **flow** | **1** | **0.309** | **1,167,180** |
 
-Flow at one step is the fastest row here by a wide margin: 1.9x the next one, 4.6x
+Flow at one step is by far the fastest row here. It's 1.9x the next one, 4.6x
 the flow 5 step row in the same table, and within 1.6x of regression's 1,891,644 in
-the main run. It also has the highest median success, 0.309, and that half does not
-hold up. Its three seeds are 0.230, 0.309 and 0.316. The 0.230 is the worst any flow
-row records and sits below the medians of flow at 5 steps and flow at 2 steps, and
-the full span covers the median of every other row in the table except diffusion at
-10 steps. The plot below is those bars, and they overlap almost completely. Three
-seeds do not separate these configurations on success.
+the main run. It also has the highest median success, 0.309, but I don't think that
+part holds up. Its three seeds are 0.230, 0.309 and 0.316. The 0.230 is the worst
+of any flow row and is below the medians of flow at 5 steps and flow at 2 steps.
+The full span covers the median of every other row in the table except diffusion
+at 10 steps. The plot below shows those bars, and they overlap almost completely.
+With three seeds I can't separate these configurations on success.
 
-So the claim the data supports is the narrow one. Cutting flow from 5 steps to 1
-costs no success I can measure and buys 4.6x the throughput. Not that one step is better.
+So I'll only make the narrow claim. Going from 5 flow steps to 1 costs no success
+I can measure and gives 4.6x the throughput. I can't say one step is better.
 
 ![throughput against success](results/latency.png)
 
@@ -137,20 +133,20 @@ More in the [method notes](notes/METHODS.md#latency-is-where-flow-earns-its-plac
 
 ![held out pairs](results/generalisation.png)
 
-Three (colour, shape) pairs are withheld from training entirely. Every head
-drops: flow from 0.273 to 0.238, regression from 0.219 to 0.172. Nothing here
-was pretrained, so this measures whether the compositional structure was learned
-from 19,200 in-domain transitions, not whether pretraining transfers. The real
-version of this column is the one that justifies putting a VLM in the loop, and
-it needs the VLM.
+I held three (colour, shape) pairs out of training completely. Every head drops.
+Flow goes from 0.273 to 0.238 and regression from 0.219 to 0.172. Nothing here was
+pretrained, so this only measures whether the heads learned the compositional
+structure from 19,200 in-domain transitions. It says nothing about pretraining
+transfer. The real version of this test is what would justify putting a VLM in
+the loop, and for that I'd need the VLM.
 
 ## What I got wrong
-I predicted action chunking would fix the dithering, and it made things worse. The reasoning was sound: the demonstrator's choice of side is unobservable, so a head that samples independently every step can draw left then right and stall.
+I expected action chunking to fix the dithering, and it made things worse. My reasoning seemed fine. The demonstrator's choice of side can't be observed, so a head that samples independently every step can pick left, then right, and stall.
 At chunk 6, flow fell from 0.246 success to 0.047 and its collisions went from
-6.09 to 12.57. Open loop execution compounds prediction error faster than
-committing to a mode buys anything on a task this reactive. Two more mistakes
-are written up in the notes: a held out split that leaked until a test caught
-it, and an encoder I built with no proprioception.
+6.09 to 12.57. On a task this reactive, open loop execution piles up prediction
+error faster than sticking to one mode helps. I wrote up two more mistakes in
+the notes. One is a held out split that leaked until a test caught it, and the
+other is an encoder I built without proprioception.
 
 More in the [method notes](notes/METHODS.md#what-i-got-wrong).
 
@@ -173,14 +169,14 @@ python -m experiments.main --seeds 0 1 2 --demos 800 --steps 2000
 python -m bench.figures
 ```
 
-The sweep takes about 17 minutes on an M4 CPU. What that run was, setting by
-setting with the line each one comes from, is in [notes/WHAT-RAN.md](notes/WHAT-RAN.md).
-Figures read the committed results and never re-run an experiment. The animation is the one thing that
-needs agent positions, so those are recorded in
-`results/rollout-traces.npz`. Delete that file and the next
-`python -m bench.figures` retrains two heads at seed 0 to rebuild it, which
-takes about three minutes and refuses to write anything unless it reproduces
-the committed `heads.csv` row exactly.
+The sweep takes about 17 minutes on an M4 CPU. I listed every setting of that run,
+with the line each one comes from, in [notes/WHAT-RAN.md](notes/WHAT-RAN.md).
+The figures read the committed results and never re-run an experiment. Only the
+animation needs agent positions, so I saved those in
+`results/rollout-traces.npz`. If you delete that file, the next
+`python -m bench.figures` retrains two heads at seed 0 to rebuild it. That takes
+about three minutes, and it won't write anything unless it reproduces the
+committed `heads.csv` row exactly.
 
 ## Where things live
 
@@ -204,8 +200,8 @@ tests/           30 tests
 - **Kim, Pertsch, Karamcheti et al. OpenVLA: An Open-Source Vision-Language-Action Model. CoRL 2024.** [arXiv:2406.09246](https://arxiv.org/abs/2406.09246) The open reference point for the full system.
 - **Liu, Zhu, Gao et al. LIBERO: Benchmarking Knowledge Transfer for Lifelong Robot Learning. NeurIPS 2023.** [arXiv:2306.03310](https://arxiv.org/abs/2306.03310) The benchmark this repo substitutes a toy for, and why that substitution costs the generalisation claim.
 
-Related: [rectified-flow-from-scratch](https://github.com/aghasalim/rectified-flow-from-scratch)
-builds the flow matching machinery the pi-0 style head uses here.
+Related: in [rectified-flow-from-scratch](https://github.com/aghasalim/rectified-flow-from-scratch)
+I built the flow matching parts that the pi-0 style head uses here.
 
 ## License
 
