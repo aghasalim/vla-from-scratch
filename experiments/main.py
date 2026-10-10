@@ -65,9 +65,13 @@ def main() -> int:
     ap.add_argument("--lr", type=float, default=1e-3)
     ap.add_argument("--eval-n", type=int, default=256)
     ap.add_argument("--chunk", type=int, default=1)
+    ap.add_argument("--heads", nargs="+", choices=list(HEADS), default=list(HEADS),
+                    help="heads to train")
+    ap.add_argument("--out", default=str(RESULTS), help="directory for the CSVs")
     args = ap.parse_args()
 
-    RESULTS.mkdir(exist_ok=True)
+    out = Path(args.out)
+    out.mkdir(parents=True, exist_ok=True)
     rows, sweep = [], []
     started = time.perf_counter()
 
@@ -76,7 +80,8 @@ def main() -> int:
                        chunk=args.chunk)
         print(f"seed {seed}: {data['action'].shape[0]} demo transitions, "
               f"scripted success {data['success_rate']:.3f}")
-        for name, cls in HEADS.items():
+        for name in args.heads:
+            cls = HEADS[name]
             enc, head, wall, final_loss = train_one(name, cls, data, args, seed)
             held_in = rollout(enc, head, args.eval_n, seed=seed + 500,
                               held_out=HELD_OUT, train=True)
@@ -103,13 +108,13 @@ def main() -> int:
                               "success": r["success"], **lt})
 
     for fname, data_rows in (("heads.csv", rows), ("step-sweep.csv", sweep)):
-        p = RESULTS / fname
+        p = out / fname
         with p.open("w", newline="") as fh:
             w = csv.DictWriter(fh, fieldnames=sorted({k for r in data_rows for k in r}))
             w.writeheader()
             w.writerows(data_rows)
-        print(f"wrote {p.relative_to(ROOT)} ({len(data_rows)} rows)")
-    (RESULTS / "run-meta.json").write_text(json.dumps({
+        print(f"wrote {p} ({len(data_rows)} rows)")
+    (out / "run-meta.json").write_text(json.dumps({
         **vars(args), "held_out_pairs": sorted(HELD_OUT),
         "wall_clock_s": time.perf_counter() - started,
         "torch": torch.__version__, "device": "cpu"}, indent=1))
