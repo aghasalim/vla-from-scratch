@@ -34,3 +34,8 @@
 **Tried:** reread `DiscreteBins.loss` against `DiscreteBins.sample`.
 **Measured:** the loss conditioned each token on the raw continuous action before it, while sampling conditions on the bin centre it drew. With 21 bins those differ by up to 0.05.
 **Concluded:** the loss now conditions on bin centres, and a test checks that two actions in the same bins give the same loss. The published discrete bins success, held out and collision figures are from the old head and are marked that way until the main run is redone.
+
+## 2026-10-11, discrete bins retrained after the teacher forcing fix
+**Tried:** retrained only the discrete bins head, all three seeds, with the README settings and the new `--heads` and `--out` flags, then put the rows into `results/heads.csv` with `scripts/splice_rerun.py`. I ran it first on an i5 desktop under WSL, but a regression run there at seed 0 gave 7.50 collisions and 0.211 success against the published 8.44 and 0.219, so rows from that machine cannot sit next to the M4 ones. The same regression run on the M4 with torch 2.13.0 reproduced the published row exactly, so the bins rerun that went in is the M4 one. Throughput and training time are kept from the original run, since sampling did not change.
+**Measured:** median success 0.234 to 0.242, range 0.211 to 0.289 to 0.188 to 0.254, held out 0.195 to 0.203, collisions 2.05 to 2.37.
+**Concluded:** nothing in the conclusions moves. Bins still overlaps regression on success and still separates from it on collisions, and the multimodal collision envelope is now 1.26 to 4.37 against regression's 8.20 to 9.45. The caveat on the bins row is gone. The i5 result is worth remembering: the same code and seed is not the same run across machines here.

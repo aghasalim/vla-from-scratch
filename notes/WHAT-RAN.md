@@ -13,7 +13,7 @@ python -m experiments.main --seeds 0 1 2 --demos 800 --steps 2000
 
 From the README, "How to run it". `results/run-meta.json` holds `demos` 800
 and `steps` 2000, written from the parsed arguments at
-`experiments/main.py:112`, so the file and the README agree. The defaults at
+`experiments/main.py:117`, so the file and the README agree. The defaults at
 `experiments/main.py:62` and `:63` are 600 and 2500, which is not what ran.
 
 ## Date, machine, versions
@@ -28,7 +28,7 @@ and `steps` 2000, written from the parsed arguments at
 ## Time
 
 `wall_clock_s` in `run-meta.json` is 1041.97 s, measured from
-`experiments/main.py:72` to `:114`. Of that, the twelve training loops account
+`experiments/main.py:76` to `:119`. Of that, the twelve training loops account
 for 999.7 s: `train_s` in `results/heads.csv`, summed. The per head figures sit
 between 82.5 s and 84.8 s and barely depend on the head, because the encoder at
 `experiments/main.py:38` dominates and is the same for all four. The other 42 s
@@ -41,18 +41,18 @@ has a timing column.
 
 | | seed | line |
 |---|---|---|
-| demonstrations | seed | `experiments/main.py:75` |
+| demonstrations | seed | `experiments/main.py:79` |
 | encoder and head init | seed | `experiments/main.py:37` |
 | batch indices | seed + 3 | `experiments/main.py:45` |
-| held in rollouts | seed + 500 | `experiments/main.py:81`, `:99` |
-| held out rollouts | seed + 900 | `experiments/main.py:83` |
+| held in rollouts | seed + 500 | `experiments/main.py:86`, `:104` |
+| held out rollouts | seed + 900 | `experiments/main.py:88` |
 | latency scenes | 0 | `vla/eval.py:50`, the same 64 scenes for every head and seed |
 
 ## Settings
 
 | setting | value | in `run-meta.json` | read at |
 |---|---:|:---:|---|
-| demos | 800 | yes | `experiments/main.py:75` |
+| demos | 800 | yes | `experiments/main.py:79` |
 | steps | 2000 | yes | `:43`, `:47` |
 | batch | 256 | yes | `:48` |
 | lr | 1e-3 | yes | `:41`, `:42` |
@@ -71,16 +71,16 @@ The `final_loss` column is the loss of the last batch, `experiments/main.py:56`.
 It is one number per run, not a series, which is why there is no loss curve in
 `results/`: the loop at `experiments/main.py:47` records nothing along the way.
 For the record the last batch losses span 0.050 to 0.058 for regression, 0.19 to
-0.23 for diffusion, 0.28 to 0.33 for flow and 1.37 to 1.41 for discrete bins,
+0.23 for diffusion, 0.28 to 0.33 for flow and 1.37 to 1.46 for discrete bins,
 and the four are not on the same scale so they do not rank the heads.
 
 ## Outputs of that run
 
 | file | rows | written at |
 |---|---:|---|
-| `results/heads.csv` | 12, one per (seed, head) | `experiments/main.py:105` |
+| `results/heads.csv` | 12, one per (seed, head) | `experiments/main.py:110` |
 | `results/step-sweep.csv` | 18, one per (seed, head, steps) | same loop |
-| `results/run-meta.json` | | `experiments/main.py:112` |
+| `results/run-meta.json` | | `experiments/main.py:117` |
 
 `results/rollout-traces.npz` came later, in commit `382beb2` on 2026-08-28.
 `bench/figures.py:198` to `:213` retrains regression and flow at seed 0, checks

@@ -39,13 +39,13 @@ REG <- "regression"
 MULTI <- c("discrete bins", "diffusion", "flow (pi-0 style)")
 
 # 1. "The seed ranges do not overlap at all: regression spans 8.20 to 9.45, and
-#    the widest multimodal range is 1.43 to 4.37."
+#    the widest multimodal range is 1.26 to 4.37."
 reg_b <- rng(heads, REG, "blocked_steps")
 mm_b <- c(min(heads$blocked_steps[heads$head != REG]),
           max(heads$blocked_steps[heads$head != REG]))
 check(identical(fmt(reg_b, 2), c("8.20", "9.45")),
       paste("regression collision span is", paste(fmt(reg_b, 2), collapse = " to ")))
-check(identical(fmt(mm_b, 2), c("1.43", "4.37")),
+check(identical(fmt(mm_b, 2), c("1.26", "4.37")),
       paste("multimodal collision envelope is", paste(fmt(mm_b, 2), collapse = " to ")))
 check(disjoint(reg_b, mm_b), "regression and multimodal collision ranges overlap")
 for (h in MULTI) {

@@ -12,21 +12,25 @@ CPU. The scripted demonstrator scores 0.988, which is the ceiling.
 | head | success | range | held out pairs | obstacle collisions | NFE | actions/s, batch 64 |
 |---|---:|---|---:|---:|---:|---:|
 | regression | 0.219 | 0.211 to 0.223 | 0.172 | **8.44** | 1 | 1,891,644 |
-| discrete bins | 0.234 | 0.211 to 0.289 | 0.195 | 2.05 | 2 | 472,761 |
+| discrete bins | 0.242 | 0.188 to 0.254 | 0.203 | 2.37 | 2 | 472,761 |
 | diffusion | 0.238 | 0.184 to 0.254 | 0.188 | 2.39 | 50 | 20,913 |
 | **flow (pi-0)** | **0.273** | 0.270 to 0.297 | **0.238** | 3.56 | 5 | 254,558 |
 
-The discrete bins row is from an older version of that head. Its loss fed each
-token the raw continuous action of the token before, while sampling feeds it the
-bin centre it drew, so it trained on inputs it never sees at run time. Fixed in
-`vla/heads.py` on 2026-10-10. The success, held out and collision figures in
-that row have not been rerun since. Its throughput is unaffected, because
-sampling did not change.
+The discrete bins row was retrained on 2026-10-11 after a fix in `vla/heads.py`.
+Its loss used to feed each token the raw continuous action of the token before,
+while sampling feeds it the bin centre it drew, so it trained on inputs it never
+sees at run time. Only that head was retrained, on the same M4 and torch
+2.13.0 as the others, which reproduce the published regression row exactly.
+`scripts/splice_rerun.py` put its success, held out and collision figures into
+`results/heads.csv`. Its throughput and training time are still the ones timed
+with the other heads, because sampling did not change and timings taken on a
+busier day would not compare. Before the fix the row read
+0.234, 0.211 to 0.289, 0.195 and 2.05.
 
 **The mode averaging prediction holds, and cleanly.** Regression spends 8.44
 steps of a 24 step episode pressed into the wall. Every multimodal head spends
-between 2.05 and 3.56. The seed ranges do not overlap at all: regression spans
-8.20 to 9.45, and the widest multimodal range is 1.43 to 4.37. This is the
+between 2.37 and 3.56. The seed ranges do not overlap at all: regression spans
+8.20 to 9.45, and the widest multimodal range is 1.26 to 4.37. This is the
 clearest result in the repo and it is exactly what the theory predicts.
 
 **Success separates too, but only for flow.** Flow spans 0.270 to 0.297 against
