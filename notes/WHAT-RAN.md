@@ -71,7 +71,7 @@ The `final_loss` column is the loss of the last batch, `experiments/main.py:56`.
 It is one number per run, not a series, which is why there is no loss curve in
 `results/`: the loop at `experiments/main.py:47` records nothing along the way.
 For the record the last batch losses span 0.050 to 0.058 for regression, 0.19 to
-0.23 for diffusion, 0.28 to 0.33 for flow and 1.37 to 1.41 for discrete bins,
+0.23 for diffusion, 0.28 to 0.33 for flow and 1.37 to 1.46 for discrete bins,
 and the four are not on the same scale so they do not rank the heads.
 
 ## Outputs of that run

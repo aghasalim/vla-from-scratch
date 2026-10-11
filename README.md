@@ -62,15 +62,16 @@ Every figure below is recomputed from the committed results by separate
 implementations in `verify/`, and CI fails if any of them disagree.
 
 The mode averaging prediction held up. Regression spends 8.44 steps of a 24 step
-episode pushed into the wall. Every multimodal head spends between 2.05 and 3.56,
+episode pushed into the wall. Every multimodal head spends between 2.37 and 3.56,
 and the seed ranges don't overlap. On success, only flow separates from
 regression, 0.273 against 0.219. The other two heads land in between and overlap.
 All four are far below the scripted demonstrator's 0.988, so the collision
 numbers show the mechanism, but none of the heads solves the task.
 
-The discrete bins figures come from an older version of that head. It conditioned
-on the raw action in training and on bin centres when sampling. I've fixed that,
-but I haven't rerun those figures yet.
+I retrained the discrete bins head after fixing a mismatch in it. It used to
+condition on the raw action in training and on bin centres when sampling. With
+the fix its median success went from 0.234 to 0.242 and its collisions from 2.05
+to 2.37, so nothing above changes.
 
 More in the [method notes](notes/METHODS.md#results).
 
