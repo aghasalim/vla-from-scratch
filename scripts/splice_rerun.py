@@ -19,7 +19,8 @@ TIMING = {"latency_s", "max_hz", "train_s"}
 def main(rerun: str) -> int:
     rows = list(csv.DictReader(TARGET.open(newline="")))
     fields = list(rows[0])
-    new = {(r["head"], r["seed"]): r for r in csv.DictReader(open(rerun, newline=""))}
+    with open(rerun, newline="") as fh:
+        new = {(r["head"], r["seed"]): r for r in csv.DictReader(fh)}
     hit = 0
     for r in rows:
         n = new.get((r["head"], r["seed"]))
