@@ -1,5 +1,3 @@
-<p align="center"><img src="assets/banner.jpg" alt="Line drawing of a robot gripper with two possible paths around an obstacle to a target" width="100%"></p>
-
 # vla-from-scratch
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23003685.svg)](https://doi.org/10.5281/zenodo.23003685)
