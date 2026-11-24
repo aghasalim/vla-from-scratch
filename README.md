@@ -1,3 +1,5 @@
+<p align="center"><img src="assets/banner.jpg" alt="Line drawing of a robot gripper with two possible paths around an obstacle to a target" width="100%"></p>
+
 # vla-from-scratch
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23003685.svg)](https://doi.org/10.5281/zenodo.23003685)
@@ -11,6 +13,23 @@ laptop CPU. The part that makes a VLA a VLA doesn't run here, and I say so in th
 next section before showing any numbers.
 
 ![mode averaging](results/multimodality.png)
+
+<details>
+<summary>Contents</summary>
+
+- [Scope, stated first](#scope-stated-first)
+- [The task, and why it has an obstacle](#the-task-and-why-it-has-an-obstacle)
+- [Results](#results)
+- [Sampling error](#sampling-error)
+- [Latency is where flow earns its place](#latency-is-where-flow-earns-its-place)
+- [Generalisation](#generalisation)
+- [What I got wrong](#what-i-got-wrong)
+- [How to run it](#how-to-run-it)
+- [Where things live](#where-things-live)
+- [Papers](#papers)
+- [License](#license)
+
+</details>
 
 ## Scope, stated first
 
